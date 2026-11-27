@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.concurrent.Executors;
 
 public abstract class WinVersions {
-    public static final String DEFAULT_VERSION = "win11";
+    public static final String DEFAULT_VERSION = "win10";
 
     public static class WinVersion {
         public final String version;

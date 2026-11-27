@@ -8,8 +8,6 @@ import com.winlator.core.Callback;
 import com.winlator.core.FileUtils;
 import com.winlator.core.TarCompressorUtils;
 import com.winlator.core.WineInfo;
-import com.winlator.core.WineRegistryEditor;
-import com.winlator.core.WineUtils;
 import com.winlator.xenvironment.RootFS;
 
 import org.json.JSONArray;
@@ -116,20 +114,6 @@ public class ContainerManager {
                 FileUtils.delete(containerDir);
                 return null;
             }
-
-            // DeX-only defaults: Windows 11, DirectInput mouse warp off (absolute DeX mouse).
-            // Best-effort and only on complete prefixes: never fail creation because of defaults.
-            try {
-                File systemReg = new File(containerDir, ".wine/system.reg");
-                if (systemReg.isFile() && systemReg.length() > 0) WineUtils.setWinVersion(container, 0);
-                File userReg = new File(containerDir, ".wine/user.reg");
-                if (userReg.isFile() && userReg.length() > 0) {
-                    try (WineRegistryEditor registryEditor = new WineRegistryEditor(userReg)) {
-                        registryEditor.setStringValue("Software\\Wine\\DirectInput", "MouseWarpOverride", "disable");
-                    }
-                }
-            }
-            catch (Exception ignored) {}
 
             container.saveData();
             maxContainerId++;

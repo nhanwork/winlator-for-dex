@@ -525,7 +525,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             envVars.putAll(container.getEnvVars());
             if (shortcut != null) envVars.putAll(shortcut.getExtra("envVars"));
             if (!envVars.has("WINEESYNC")) envVars.put("WINEESYNC", "1");
-            if (!envVars.has("WINEDLLOVERRIDES")) envVars.put("WINEDLLOVERRIDES", "powershell.exe=d");
 
             guestProgramLauncherComponent.setBox64Preset(shortcut != null ? shortcut.getExtra("box64Preset", container.getBox64Preset()) : container.getBox64Preset());
         }

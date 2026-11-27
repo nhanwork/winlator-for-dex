@@ -158,7 +158,7 @@ public class ContainerDetailFragment extends Fragment {
 
         final Spinner sStartupSelection = view.findViewById(R.id.SStartupSelection);
         byte oldStartupSelection = isEditMode() ? container.getStartupSelection() : -1;
-        sStartupSelection.setSelection(oldStartupSelection != -1 ? oldStartupSelection : Container.STARTUP_SELECTION_NORMAL);
+        sStartupSelection.setSelection(oldStartupSelection != -1 ? oldStartupSelection : Container.STARTUP_SELECTION_ESSENTIAL);
 
         final Spinner sWinVersion = view.findViewById(R.id.SWinVersion);
         sWinVersion.setTag((byte)-1);
@@ -435,10 +435,6 @@ public class ContainerDetailFragment extends Fragment {
         final Context context = view.getContext();
         final EnvVarsView envVarsView = view.findViewById(R.id.EnvVarsView);
         EnvVars defaultEnvVars = new EnvVars(isEditMode() ? container.getEnvVars() : Container.DEFAULT_ENV_VARS);
-        if (!isEditMode() && (DexUtils.isDesktopMode(context) || DexUtils.hasExternalDisplay(context))
-            && !defaultEnvVars.has("WINEDLLOVERRIDES")) {
-            defaultEnvVars.put("WINEDLLOVERRIDES", "powershell.exe=d");
-        }
         envVarsView.setEnvVars(defaultEnvVars);
         view.findViewById(R.id.BTAddEnvVar).setOnClickListener((v) -> (new AddEnvVarDialog(context, envVarsView)).show());
         return envVarsView;

@@ -38,12 +38,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final @IntRange(from = 1, to = 19) byte CONTAINER_PATTERN_COMPRESSION_LEVEL = 9;
     public static final byte PERMISSION_WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 1;
     public static final byte OPEN_FILE_REQUEST_CODE = 2;
-    public static final byte EDIT_INPUT_CONTROLS_REQUEST_CODE = 3;
     public static final byte OPEN_DIRECTORY_REQUEST_CODE = 4;
     private DrawerLayout drawerLayout;
     public final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
-    private boolean editInputControls = false;
-    private int selectedProfileId;
     private Callback<Uri> openFileCallback;
     private SharedPreferences preferences;
     private Fragment currentFragment;
@@ -70,28 +67,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent intent = getIntent();
-        editInputControls = intent.getBooleanExtra("edit_input_controls", false);
-        if (editInputControls) {
-            selectedProfileId = intent.getIntExtra("selected_profile_id", 0);
-            actionBar.setHomeAsUpIndicator(R.drawable.icon_action_bar_back);
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.menu_item_input_controls));
-            navigationView.setCheckedItem(R.id.menu_item_input_controls);
-        }
-        else {
-            boolean showShortcutsFirst = preferences.getBoolean("show_shortcuts_first", false);
-            int selectedMenuItemId = intent.getIntExtra("selected_menu_item_id", 0);
-            int menuItemId = selectedMenuItemId > 0 ? selectedMenuItemId : (showShortcutsFirst ? R.id.menu_item_shortcuts : R.id.menu_item_containers);
+        Intent intent = getIntent();
+        boolean showShortcutsFirst = preferences.getBoolean("show_shortcuts_first", false);
+        int selectedMenuItemId = intent.getIntExtra("selected_menu_item_id", 0);
+        int menuItemId = selectedMenuItemId > 0 ? selectedMenuItemId : (showShortcutsFirst ? R.id.menu_item_shortcuts : R.id.menu_item_containers);
 
-            actionBar.setHomeAsUpIndicator(R.drawable.icon_action_bar_menu);
-            onNavigationItemSelected(navigationView.getMenu().findItem(menuItemId));
-            navigationView.setCheckedItem(menuItemId);
-            if (!requestAppPermissions()) RootFSInstaller.installIfNeeded(this);
+        actionBar.setHomeAsUpIndicator(R.drawable.icon_action_bar_menu);
+        onNavigationItemSelected(navigationView.getMenu().findItem(menuItemId));
+        navigationView.setCheckedItem(menuItemId);
+        if (!requestAppPermissions()) RootFSInstaller.installIfNeeded(this);
 
-            int containerId = intent.getIntExtra("container_id", 0);
-            String startPath = intent.getStringExtra("start_path");
-            if (containerId > 0 && startPath != null) {
-                showFragment(new ContainerFileManagerFragment(containerId, startPath));
-            }
+        int containerId = intent.getIntExtra("container_id", 0);
+        String startPath = intent.getStringExtra("start_path");
+        if (containerId > 0 && startPath != null) {
+            showFragment(new ContainerFileManagerFragment(containerId, startPath));
         }
     }
 
@@ -169,17 +158,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return super.onOptionsItemSelected(menuItem);
         }
         else {
-            if (editInputControls) {
-                setResult(RESULT_OK);
-                finish();
+            if (currentFragment instanceof BaseFileManagerFragment) {
+                BaseFileManagerFragment fileManagerFragment = (BaseFileManagerFragment)currentFragment;
+                if (fileManagerFragment.onOptionsMenuClicked()) return true;
             }
-            else {
-                if (currentFragment instanceof BaseFileManagerFragment) {
-                    BaseFileManagerFragment fileManagerFragment = (BaseFileManagerFragment)currentFragment;
-                    if (fileManagerFragment.onOptionsMenuClicked()) return true;
-                }
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
+            drawerLayout.openDrawer(GravityCompat.START);
             return true;
         }
     }
@@ -199,9 +182,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_item_containers:
                 preferences.edit().putBoolean("show_shortcuts_first", false).apply();
                 showFragment(new ContainersFragment());
-                break;
-            case R.id.menu_item_input_controls:
-                showFragment(new InputControlsFragment(selectedProfileId));
                 break;
             case R.id.menu_item_settings:
                 showFragment(new SettingsFragment());

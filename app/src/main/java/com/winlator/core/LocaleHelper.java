@@ -27,6 +27,7 @@ public class LocaleHelper {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int index = preferences.getInt("lc_index", -1);
 
+        if (index < 0) index = getLocaleIndex(context);
         if (index < 0 || index >= supportedLocales.length) return context;
         Locale locale = new Locale(supportedLocales[index].substring(0, 2));
         Locale.setDefault(locale);

@@ -299,4 +299,13 @@
     <string name="enable_background_wakelock">Ativar wakelock quando o dispositivo está bloqueado</string>
     <string name="save_mem_on_run_from_steam">Economize memória ao executar a partir do Steam</string>
     <string name="present_mode">Modo de Apresentação</string>
+
+    <string name="release_pointer_capture">Liberar o mouse</string>
+    <string name="pointer_capture_released">Mouse liberado — toque na janela para continuar</string>
+    <string name="dex_mode_enabled">Modo DeX: mouse absoluto, sincronização da área de transferência</string>
+    <string name="dex_only_build">Esta versão requer Samsung DeX ou um monitor externo</string>
+    <string name="quick_actions">Ações rápidas</string>
+    <string name="open_menu">Abrir menu</string>
+    <string name="touchpad_help_pointer_capture_title">Liberar o mouse (DeX / mouse externo)</string>
+    <string name="touchpad_help_pointer_capture_description">Empurre o mouse para a borda da tela, toque no botão de saída ou pressione Ctrl+Alt+G</string>
 </resources>

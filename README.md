@@ -8,7 +8,8 @@ DeX-only build of Winlator for Samsung DeX / Android desktop mode.
 Office-first: absolute mouse, no pointer trap, Vietnamese UI included.
 
 - Requires Samsung DeX or an external display (exits on phones)
-- No game mode, no relative mouse, no logs console
+- No game mode, no relative mouse, no logs console, no gamepad/touch-profile UI
+- Touch gestures still work; office input is mouse + keyboard first
 - Quick-action toolbar, DeX clipboard sync, per-device recommended config
 - Vietnamese locale (`Tiếng Việt`) with English fallback
 

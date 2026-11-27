@@ -299,4 +299,13 @@
     <string name="enable_background_wakelock">Включить wakelock, когда устройство заблокировано</string>
     <string name="save_mem_on_run_from_steam">Экономия памяти при запуске из Steam</string>
     <string name="present_mode">Режим презентации</string>
+
+    <string name="release_pointer_capture">Освободить мышь</string>
+    <string name="pointer_capture_released">Мышь освобождена — нажмите на окно, чтобы продолжить</string>
+    <string name="dex_mode_enabled">Режим DeX: абсолютная мышь, синхр. буфера обмена</string>
+    <string name="dex_only_build">Для этой сборки требуется Samsung DeX или внешний дисплей</string>
+    <string name="quick_actions">Быстрые действия</string>
+    <string name="open_menu">Открыть меню</string>
+    <string name="touchpad_help_pointer_capture_title">Освобождение мыши (DeX / внешняя мышь)</string>
+    <string name="touchpad_help_pointer_capture_description">Подведите мышь к краю экрана, нажмите кнопку выхода или Ctrl+Alt+G</string>
 </resources>

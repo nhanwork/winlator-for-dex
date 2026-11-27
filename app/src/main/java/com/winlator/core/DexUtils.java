@@ -19,7 +19,7 @@ import com.winlator.widget.LogView;
 
 public abstract class DexUtils {
     // Bump on every release so startup.log identifies the running build.
-    public static final String FORK_BUILD = "v0.1.0-iso3";
+    public static final String FORK_BUILD = "v0.1.0-iso4";
     private static final String SAMSUNG_DEX_FEATURE = "com.samsung.feature.samsung_dex";
 
     public static boolean isDesktopMode(Context context) {

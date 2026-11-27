@@ -781,7 +781,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         StringBuilder sb = new StringBuilder();
         sb.append("Wine: ").append(container != null ? container.getWineVersion() : "?").append('\n');
         sb.append("Box64 preset: ").append(container != null ? container.getBox64Preset() : "?").append('\n');
-        sb.append("Graphics: ").append(graphicsDriver != null ? String.join(",", graphicsDriver) : "?").append('\n');
+        sb.append("Graphics: ").append(container != null ? container.getGraphicsDriver() : "?").append('\n');
         sb.append("Screen: ").append(screenInfo).append('\n');
         if (container != null) {
             File systemReg = new File(container.getRootDir(), ".wine/system.reg");

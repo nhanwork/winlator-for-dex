@@ -139,9 +139,8 @@ public class SettingsFragment extends Fragment {
         cbOpenAndroidBrowserFromWine.setChecked(preferences.getBoolean("open_android_browser_from_wine", true));
 
         final CheckBox cbUseAndroidClipboardOnWine = view.findViewById(R.id.CBUseAndroidClipboardOnWine);
-        boolean clipUserSet = preferences.getBoolean("use_android_clipboard_on_wine_user_set", false);
         cbUseAndroidClipboardOnWine.setChecked(preferences.getBoolean("use_android_clipboard_on_wine", false)
-            || (!clipUserSet && DexUtils.isDesktopMode(view.getContext())));
+            || DexUtils.isDesktopMode(view.getContext()));
 
         final CheckBox cbEnableBackgroundWakelock = view.findViewById(R.id.CBEnableBackgroundWakelock);
         cbEnableBackgroundWakelock.setChecked(preferences.getBoolean("enable_background_wakelock", false));
@@ -168,9 +167,6 @@ public class SettingsFragment extends Fragment {
             }
         });
         cbEnableBackgroundWakelock.setVisibility(cbEnableBackgroundProtection.isChecked() ? View.VISIBLE : View.GONE);
-
-        final CheckBox cbSaveMemOnRunFromSteam = view.findViewById(R.id.CBSaveMemOnRunFromSteam);
-        cbSaveMemOnRunFromSteam.setChecked(preferences.getBoolean("save_mem_on_run_from_steam", true));
 
         final CheckBox cbEnableWineDebug = view.findViewById(R.id.CBEnableWineDebug);
         cbEnableWineDebug.setChecked(preferences.getBoolean("enable_wine_debug", false));
@@ -229,10 +225,8 @@ public class SettingsFragment extends Fragment {
             editor.putBoolean("save_logs_to_file", cbSaveLogsToFile.isChecked());
             editor.putBoolean("open_android_browser_from_wine", cbOpenAndroidBrowserFromWine.isChecked());
             editor.putBoolean("use_android_clipboard_on_wine", cbUseAndroidClipboardOnWine.isChecked());
-            editor.putBoolean("use_android_clipboard_on_wine_user_set", true);
             editor.putBoolean("enable_background_protection", cbEnableBackgroundProtection.isChecked());
             editor.putBoolean("enable_background_wakelock", cbEnableBackgroundWakelock.isChecked());
-            editor.putBoolean("save_mem_on_run_from_steam", cbSaveMemOnRunFromSteam.isChecked());
 
             int newAppThemeId = rgAppTheme.getCheckedRadioButtonId();
             editor.putInt("app_theme", newAppThemeId == R.id.RBLight ? APP_THEME_LIGHT : APP_THEME_DARK);

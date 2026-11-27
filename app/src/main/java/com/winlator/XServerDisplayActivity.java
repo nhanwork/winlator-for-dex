@@ -151,8 +151,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         dexMode = DexUtils.isDesktopMode(this);
-        boolean clipUserSet = preferences.getBoolean("use_android_clipboard_on_wine_user_set", false);
-        boolean useAndroidClipboardOnWine = preferences.getBoolean("use_android_clipboard_on_wine", false) || (!clipUserSet && dexMode);
+        boolean useAndroidClipboardOnWine = preferences.getBoolean("use_android_clipboard_on_wine", false) || dexMode;
         clipboardManager = useAndroidClipboardOnWine ? (ClipboardManager)getSystemService(CLIPBOARD_SERVICE) : null;
         if (clipboardManager != null) {
             primaryClipListener = this::pushAndroidClipboardToWine;

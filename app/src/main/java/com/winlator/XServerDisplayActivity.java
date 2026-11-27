@@ -485,8 +485,19 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     // DeX fork: refuse to boot a broken prefix instead of hanging on the spinner.
     private boolean isContainerPrefixValid() {
         if (container == null) return true;
-        File systemReg = new File(container.getRootDir(), ".wine/system.reg");
-        return systemReg.isFile() && systemReg.length() > 0;
+        try {
+            File systemReg = new File(container.getRootDir(), ".wine/system.reg");
+            if (!systemReg.isFile() || systemReg.length() < 10240) return false;
+            byte[] header = new byte[64];
+            try (java.io.FileInputStream in = new java.io.FileInputStream(systemReg)) {
+                int read = in.read(header);
+                if (read <= 0) return false;
+            }
+            return new String(header, java.nio.charset.StandardCharsets.UTF_8).contains("WINE REGISTRY");
+        }
+        catch (Exception ignored) {
+            return false;
+        }
     }
 
     private void setupXEnvironment() {

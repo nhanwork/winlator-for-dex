@@ -238,6 +238,11 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         preloaderDialog.show(R.string.starting_up);
         DexUtils.appendMarker(this, "setupXEnvironment begin");
+        if (!isGenerateWineprefix() && !isContainerPrefixValid()) {
+            AppUtils.showToast(this, "Prefix hỏng — xóa container này và tạo lại");
+            finish();
+            return;
+        }
 
         inputControlsManager = new InputControlsManager(this);
         xServer = new XServer(this, screenInfo);
@@ -475,6 +480,13 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         }
 
         if (containerDataChanged) container.saveData();
+    }
+
+    // DeX fork: refuse to boot a broken prefix instead of hanging on the spinner.
+    private boolean isContainerPrefixValid() {
+        if (container == null) return true;
+        File systemReg = new File(container.getRootDir(), ".wine/system.reg");
+        return systemReg.isFile() && systemReg.length() > 0;
     }
 
     private void setupXEnvironment() {

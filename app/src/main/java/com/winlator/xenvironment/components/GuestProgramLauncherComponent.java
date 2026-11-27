@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import com.winlator.box64.Box64Preset;
 import com.winlator.box64.Box64PresetManager;
 import com.winlator.core.Callback;
+import com.winlator.core.DexUtils;
 import com.winlator.core.DefaultVersion;
 import com.winlator.core.EnvVars;
 import com.winlator.core.FileUtils;
@@ -106,6 +107,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         if (!shmDir.isDirectory()) shmDir.mkdirs();
 
         String command = rootDir+"/usr/local/bin/box64 "+guestExecutable;
+        DexUtils.appendMarker(environment.getContext(), "guest exec: "+guestExecutable);
 
         return ProcessHelper.exec(command, envVars, rootDir, (status) -> {
             synchronized (lock) {

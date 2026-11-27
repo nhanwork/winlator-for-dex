@@ -612,7 +612,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         });
         rootView.addView(pointerExitButton);
         setupQuickBar(rootView);
-        applyOfficeMode();
 
         inputControlsView = new InputControlsView(this);
         inputControlsView.setOverlayOpacity(preferences.getFloat("overlay_opacity", InputControlsView.DEFAULT_OVERLAY_OPACITY));
@@ -624,6 +623,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         inputControlsView.setXServer(xServer);
         inputControlsView.setVisibility(View.GONE);
         rootView.addView(inputControlsView);
+        applyOfficeMode();
 
         if (container != null && container.getHUDMode() != FrameRating.Mode.DISABLED.ordinal()) {
             frameRating = new FrameRating(this);

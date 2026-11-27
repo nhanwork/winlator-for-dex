@@ -1,12 +1,26 @@
 <p align="center">
-	<img src="logo.png" width="376" height="128" alt="Winlator Logo" />
+	<img src="logo.png" width="376" height="128" alt="Winlator DeX Logo" />
 </p>
 
-# Winlator
+# Winlator DeX
 
-Winlator is an Android application that lets you to run Windows (x86_64) applications with Wine and Box86/Box64.<br>
-This repository stores the latest updates for the Winlator app source.<br>
-For more information and releases, please visit the main repository: https://github.com/brunodev85/winlator
+DeX-only build of Winlator for Samsung DeX / Android desktop mode.
+Office-first: absolute mouse, no pointer trap, Vietnamese UI included.
+
+- Requires Samsung DeX or an external display (exits on phones)
+- No game mode, no relative mouse, no logs console
+- Quick-action toolbar, DeX clipboard sync, per-device recommended config
+- Vietnamese locale (`Tiếng Việt`) with English fallback
+
+Docs: [English](docs/DEX.md) · [Tiếng Việt](docs/DEX-VI.md)
+
+APK: see [Releases](../../releases) (`v*` tags are built by CI).
+
+## Upstream
+
+Based on [brunodev85/winlator-app](https://github.com/brunodev85/winlator-app).
+DeX fixes proposed upstream in
+[winlator-app#110](https://github.com/brunodev85/winlator-app/pull/110).
 
 # Credits and Third-party apps
 

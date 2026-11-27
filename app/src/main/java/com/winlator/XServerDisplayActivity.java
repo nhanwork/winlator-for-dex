@@ -1,6 +1,7 @@
 package com.winlator;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -68,6 +69,7 @@ import com.winlator.renderer.GLRenderer;
 import com.winlator.services.ForegroundService;
 import com.winlator.widget.FrameRating;
 import com.winlator.widget.InputControlsView;
+import com.winlator.widget.LogView;
 import com.winlator.widget.MagnifierView;
 import com.winlator.widget.TouchpadView;
 import com.winlator.widget.XServerView;
@@ -126,6 +128,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private ClipboardManager clipboardManager;
     private ClipboardManager.OnPrimaryClipChangedListener primaryClipListener;
     private String lastPushedClip = "";
+    private boolean firstWindowMapped = false;
     private boolean dexMode = false;
     private ImageButton pointerExitButton;
     private LinearLayout quickBar;
@@ -257,6 +260,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             @Override
             public void onMapWindow(Window window) {
                 if (!flags[0] && window.isRenderable() && !window.getClassName().isEmpty()) {
+                    firstWindowMapped = true;
                     DexUtils.appendMarker(XServerDisplayActivity.this, "first window mapped: " + window.getClassName());
                     updateCursorVisibility();
                     preloaderDialog.closeOnUiThread();
@@ -577,6 +581,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         }
         environment.startEnvironmentComponents();
         DexUtils.appendMarker(this, "environment components started, waiting for first window");
+        startBootWatchdog();
 
         winHandler.start();
         envVars.clear();
@@ -749,6 +754,43 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         touchpadView.setCaptureAllowed(capturePointerOnExternalMouse && !dexMode);
         updateCursorVisibility();
         if (dexMode) AppUtils.showToast(this, R.string.dex_mode_enabled);
+    }
+
+    // DeX fork: never hang silently. If Wine maps no window in 90s, show a
+    // diagnostics report the tester can copy and send back.
+    private void startBootWatchdog() {
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            if (firstWindowMapped || isFinishing() || isDestroyed()) return;
+            DexUtils.appendMarker(this, "watchdog: no window after 90s");
+            final String report = buildBootReport();
+            new AlertDialog.Builder(this)
+                .setTitle("Wine không khởi động")
+                .setMessage(report)
+                .setCancelable(false)
+                .setPositiveButton(R.string.copy, (dialog, which) -> {
+                    ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                    if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("winlator-dex-report", report));
+                    AppUtils.showToast(this, R.string.logs_exported_to);
+                })
+                .setNegativeButton(R.string.exit, (dialog, which) -> finish())
+                .show();
+        }, 90000);
+    }
+
+    private String buildBootReport() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Wine: ").append(container != null ? container.getWineVersion() : "?").append('\n');
+        sb.append("Box64 preset: ").append(container != null ? container.getBox64Preset() : "?").append('\n');
+        sb.append("Graphics: ").append(graphicsDriver != null ? String.join(",", graphicsDriver) : "?").append('\n');
+        sb.append("Screen: ").append(screenInfo).append('\n');
+        if (container != null) {
+            File systemReg = new File(container.getRootDir(), ".wine/system.reg");
+            sb.append("system.reg: ").append(systemReg.isFile() ? systemReg.length() + " bytes" : "missing").append('\n');
+        }
+        File logFile = LogView.getLogFile();
+        sb.append("logs.txt: ").append(logFile.isFile() ? logFile.length() + " bytes" : "missing").append('\n');
+        sb.append("startup.log + logs.txt + crash.txt: Documents/WinlatorDeX/");
+        return sb.toString();
     }
 
     private void updateCursorVisibility() {

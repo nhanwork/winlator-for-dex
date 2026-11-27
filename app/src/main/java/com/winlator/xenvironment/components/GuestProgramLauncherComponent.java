@@ -113,6 +113,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
             synchronized (lock) {
                 pid = -1;
             }
+            DexUtils.appendMarker(environment.getContext(), "guest terminated status="+status);
             if (terminationCallback != null) terminationCallback.call(status);
         });
     }

@@ -38,9 +38,14 @@ are pushed immediately). You can turn it off in Settings; off stays off.
 Settings > Language > Tiếng Việt. Missing keys fall back to English.
 Wine apps get LC_ALL=vi_VN.UTF-8 when Vietnamese is selected.
 
+## Logs for crash reports
+
+Every session writes `Documents/Winlator/logs.txt`. Java crashes append to
+`Documents/Winlator/crash.txt`. Attach both when reporting a crash.
+
 ## Build
 
-Tag `dex-v*` (or manual dispatch) runs `.github/workflows/build-dex-apk.yml`
+Tag `v*` (or manual dispatch) runs `.github/workflows/build-dex-apk.yml`
 and attaches the debug APK to the GitHub release.
 
 ## Upstream

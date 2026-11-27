@@ -39,9 +39,14 @@ bên ngoài là đẩy vào ngay. Tắt trong Cài đặt thì giữ nguyên t�
 Cài đặt > Ngôn ngữ > Tiếng Việt. Chuỗi nào chưa dịch sẽ hiện tiếng Anh.
 Ứng dụng Wine nhận LC_ALL=vi_VN.UTF-8 khi đã chọn tiếng Việt.
 
+## Lấy log khi crash
+
+Mỗi phiên chạy ghi vào `Documents/Winlator/logs.txt`. Crash của app nối thêm
+vào `Documents/Winlator/crash.txt`. Gửi cả hai file khi báo lỗi.
+
 ## Lấy file APK
 
-Vào mục Releases của repo, tải file APK ở bản `dex-v*` mới nhất — do
+Vào mục Releases của repo, tải file APK ở bản `v*` mới nhất — do
 GitHub Actions tự build khi gắn thẻ.
 
 ## Liên quan bản gốc

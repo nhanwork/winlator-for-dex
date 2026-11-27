@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import androidx.annotation.IntRange;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -31,7 +32,13 @@ import com.winlator.core.Callback;
 import com.winlator.core.DexUtils;
 import com.winlator.core.LocaleHelper;
 import com.winlator.core.PreloaderDialog;
+import com.winlator.widget.LogView;
 import com.winlator.xenvironment.RootFSInstaller;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final boolean DEBUG_MODE = false; // FIXME change to false
@@ -49,9 +56,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         AppUtils.setActivityTheme(this);
         super.onCreate(savedInstanceState);
+        installCrashLogger();
         if (!DexUtils.isDesktopMode(this) && !DexUtils.hasExternalDisplay(this)) {
-            AppUtils.showToast(this, R.string.dex_only_build);
-            finish();
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setMessage(R.string.dex_only_build)
+                .setCancelable(false)
+                .setPositiveButton(R.string.exit, (dialog, which) -> finish())
+                .show();
             return;
         }
         setContentView(R.layout.main_activity);
@@ -67,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent intent = getIntent();
-        Intent intent = getIntent();
         boolean showShortcutsFirst = preferences.getBoolean("show_shortcuts_first", false);
         int selectedMenuItemId = intent.getIntExtra("selected_menu_item_id", 0);
         int menuItemId = selectedMenuItemId > 0 ? selectedMenuItemId : (showShortcutsFirst ? R.id.menu_item_shortcuts : R.id.menu_item_containers);
@@ -82,6 +92,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (containerId > 0 && startPath != null) {
             showFragment(new ContainerFileManagerFragment(containerId, startPath));
         }
+    }
+
+    // DeX fork: persist Java crashes next to logs.txt so testers can attach them.
+    private void installCrashLogger() {
+        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            try {
+                File dir = LogView.getLogFile().getParentFile();
+                if (dir != null && !dir.isDirectory()) dir.mkdirs();
+                if (dir != null) {
+                    try (PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, "crash.txt"), true))) {
+                        writer.println(new Date().toString());
+                        throwable.printStackTrace(writer);
+                    }
+                }
+            }
+            catch (Exception ignored) {}
+            if (defaultHandler != null) defaultHandler.uncaughtException(thread, throwable);
+        });
     }
 
     @Override

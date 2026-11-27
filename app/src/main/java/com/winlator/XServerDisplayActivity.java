@@ -237,7 +237,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         }
 
         preloaderDialog.show(R.string.starting_up);
-        DexUtils.appendMarker(this, "setupXEnvironment begin");
+        DexUtils.appendMarker(this, "setupXEnvironment begin (fork build "+DexUtils.FORK_BUILD+")");
         if (!isGenerateWineprefix() && !isContainerPrefixValid()) {
             AppUtils.showToast(this, "Prefix hỏng — xóa container này và tạo lại");
             finish();

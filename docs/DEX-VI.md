@@ -31,6 +31,8 @@ bên ngoài là đẩy vào ngay. Tắt trong Cài đặt thì giữ nguyên t�
 
 - Màn hình container: 1920x1080 khi tạo mới trên DeX, có sẵn mức 2560x1440.
 - Đồ họa: Turnip (tự chọn cho Adreno) + Gladio.
+- DX wrapper: mặc định WineD3D (hợp app văn phòng nhất); cần 3D thì đổi DXVK từng máy.
+- Khởi động: Normal (đủ dịch vụ) cho tương thích cao nhất.
 - Box64: Performance. Biến môi trường: WINEESYNC=1,
   WINEDLLOVERRIDES=powershell.exe=d (tạo sẵn cho container mới trên DeX).
 

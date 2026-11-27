@@ -30,6 +30,8 @@ are pushed immediately). You can turn it off in Settings; off stays off.
 - Container screen: 1920x1080 on DeX (default for new containers),
   2560x1440 preset available.
 - Graphics: Turnip (auto-selected for Adreno) + Gladio.
+- DX wrapper: WineD3D by default (best for office apps); switch to DXVK per container for 3D.
+- Startup: Normal (all services) for max compatibility.
 - Box64 preset: Performance. Env: WINEESYNC=1,
   WINEDLLOVERRIDES=powershell.exe=d (pre-created for new DeX containers).
 

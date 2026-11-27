@@ -158,7 +158,7 @@ public class ContainerDetailFragment extends Fragment {
 
         final Spinner sStartupSelection = view.findViewById(R.id.SStartupSelection);
         byte oldStartupSelection = isEditMode() ? container.getStartupSelection() : -1;
-        sStartupSelection.setSelection(oldStartupSelection != -1 ? oldStartupSelection : Container.STARTUP_SELECTION_ESSENTIAL);
+        sStartupSelection.setSelection(oldStartupSelection != -1 ? oldStartupSelection : Container.STARTUP_SELECTION_NORMAL);
 
         final Spinner sWinVersion = view.findViewById(R.id.SWinVersion);
         sWinVersion.setTag((byte)-1);

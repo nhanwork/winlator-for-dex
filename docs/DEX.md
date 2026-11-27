@@ -42,8 +42,8 @@ Wine apps get LC_ALL=vi_VN.UTF-8 when Vietnamese is selected.
 
 ## Logs for crash reports
 
-Every session writes `Documents/Winlator/logs.txt`. Java crashes append to
-`Documents/Winlator/crash.txt`. Attach both when reporting a crash.
+Every session writes `Documents/WinlatorDeX/logs.txt`. Java crashes append to
+`Documents/WinlatorDeX/crash.txt`. Attach both when reporting a crash.
 
 ## Build
 

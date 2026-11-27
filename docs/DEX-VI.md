@@ -43,8 +43,8 @@ Cài đặt > Ngôn ngữ > Tiếng Việt. Chuỗi nào chưa dịch sẽ hiệ
 
 ## Lấy log khi crash
 
-Mỗi phiên chạy ghi vào `Documents/Winlator/logs.txt`. Crash của app nối thêm
-vào `Documents/Winlator/crash.txt`. Gửi cả hai file khi báo lỗi.
+Mỗi phiên chạy ghi vào `Documents/WinlatorDeX/logs.txt`. Crash của app nối thêm
+vào `Documents/WinlatorDeX/crash.txt`. Gửi cả hai file khi báo lỗi.
 
 ## Lấy file APK
 

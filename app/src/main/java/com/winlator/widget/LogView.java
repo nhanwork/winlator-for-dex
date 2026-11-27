@@ -227,7 +227,7 @@ public class LogView extends View {
     }
 
     public static File getLogFile() {
-        File parent = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Winlator");
+        File parent = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "WinlatorDeX");
         if (!parent.isDirectory()) parent.mkdirs();
         return new File(parent, "logs.txt");
     }

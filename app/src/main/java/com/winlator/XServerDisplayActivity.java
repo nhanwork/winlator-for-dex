@@ -165,7 +165,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         NavigationView navigationView = findViewById(R.id.NavigationView);
         ProcessHelper.removeAllDebugCallbacks();
         // DeX fork: console UI hidden, but keep headless logging so sessions
-        // always write Documents/Winlator/logs.txt for crash reports.
+        // always write Documents/WinlatorDeX/logs.txt for crash reports.
         ProcessHelper.addDebugCallback(debugDialog = new DebugDialog(this));
         navigationView.setNavigationItemSelectedListener(this);
 

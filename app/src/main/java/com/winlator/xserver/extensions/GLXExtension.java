@@ -183,7 +183,7 @@ public class GLXExtension extends Extension {
 
         switch (name) {
             case GLXEnums.GLX_VENDOR:
-                string = "Winlator";
+                string = "WinlatorDeX";
                 break;
             case GLXEnums.GLX_VERSION:
                 string = MAJOR_VERSION+"."+MINOR_VERSION;

@@ -279,7 +279,7 @@ public class ForegroundService extends Service {
 
         Notification n = notificationUtils.createForegroundNotification(
                 getNotificationContent(),
-                "Winlator",
+                "Winlator DeX",
                 XServerDisplayActivity.class, // Service class for the 'Exit' action
                 null, // Exit action here, not used because might cause issues
                 targetActivity // Activity class for the 'Open' (notification tap) action

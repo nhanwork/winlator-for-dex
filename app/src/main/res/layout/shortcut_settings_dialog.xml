@@ -295,39 +295,7 @@
                     android:text="@string/box64" />
             </FrameLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp">
 
-                <LinearLayout style="@style/FieldSet">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/profile" />
-
-                    <Spinner
-                        style="@style/ComboBox"
-                        android:id="@+id/SControlsProfile"
-                        android:layout_width="match_parent" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/directinput_mapper_type" />
-
-                    <Spinner
-                        style="@style/ComboBox"
-                        android:id="@+id/SDInputMapperType"
-                        android:layout_width="match_parent"
-                        android:entries="@array/dinput_mapper_type_entries" />
-                </LinearLayout>
-
-                <TextView
-                    style="@style/FieldSetLabel"
-                    android:background="?attr/colorSecondarySurface"
-                    android:text="@string/input_controls" />
-            </FrameLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"

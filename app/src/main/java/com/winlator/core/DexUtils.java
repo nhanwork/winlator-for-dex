@@ -1,11 +1,17 @@
 package com.winlator.core;
 
+import android.app.AlertDialog;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.hardware.display.DisplayManager;
 import android.provider.Settings;
 import android.view.Display;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 // shortcut: SEM desktop reflection may break on future OneUI; UiModeManager covers generic desktop mode.
 public abstract class DexUtils {
@@ -49,5 +55,46 @@ public abstract class DexUtils {
         }
         catch (Exception ignored) {}
         return Math.max(0.25f, Math.min(2.0f, 1.0f + speed * 0.1f));
+    }
+
+    // On DeX, dropdown spinners are hard to scroll with a mouse. Show the
+    // choices in a wheel/keyboard-friendly single-choice dialog instead.
+    public static void enableDialogModeForAllSpinners(View root) {
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup)root;
+            for (int i = 0; i < group.getChildCount(); i++) enableDialogModeForAllSpinners(group.getChildAt(i));
+        }
+        else if (root instanceof Spinner) {
+            final Spinner spinner = (Spinner)root;
+            spinner.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showSpinnerDialog(spinner);
+                    return true;
+                }
+                return false;
+            });
+            spinner.setOnKeyListener((v, keyCode, event) -> {
+                if (event.getAction() == android.view.KeyEvent.ACTION_DOWN
+                    && (keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER || keyCode == android.view.KeyEvent.KEYCODE_ENTER)) {
+                    showSpinnerDialog(spinner);
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    private static void showSpinnerDialog(final Spinner spinner) {
+        final SpinnerAdapter adapter = spinner.getAdapter();
+        if (adapter == null) return;
+        final int count = adapter.getCount();
+        final CharSequence[] items = new CharSequence[count];
+        for (int i = 0; i < count; i++) items[i] = String.valueOf(adapter.getItem(i));
+        new AlertDialog.Builder(spinner.getContext())
+            .setSingleChoiceItems(items, spinner.getSelectedItemPosition(), (dialog, which) -> {
+                spinner.setSelection(which);
+                dialog.dismiss();
+            })
+            .show();
     }
 }

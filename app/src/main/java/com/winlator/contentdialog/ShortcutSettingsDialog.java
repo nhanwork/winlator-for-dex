@@ -3,7 +3,6 @@ package com.winlator.contentdialog;
 import android.content.Context;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,18 +16,16 @@ import com.winlator.box64.Box64PresetManager;
 import com.winlator.container.GraphicsDrivers;
 import com.winlator.container.Shortcut;
 import com.winlator.core.AppUtils;
+import com.winlator.core.DexUtils;
 import com.winlator.container.DXWrapperPicker;
 import com.winlator.core.EnvVars;
 import com.winlator.container.GraphicsDriverPicker;
 import com.winlator.core.FileUtils;
 import com.winlator.core.StringUtils;
 import com.winlator.core.WineUtils;
-import com.winlator.inputcontrols.ControlsProfile;
-import com.winlator.inputcontrols.InputControlsManager;
 import com.winlator.widget.EnvVarsView;
 import com.winlator.win32.MSLink;
 import com.winlator.win32.PEParser;
-import com.winlator.winhandler.GamepadHandler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,7 +33,6 @@ import java.util.ArrayList;
 public class ShortcutSettingsDialog extends ContentDialog {
     private final ShortcutsFragment fragment;
     private final Shortcut shortcut;
-    private InputControlsManager inputControlsManager;
 
     public ShortcutSettingsDialog(ShortcutsFragment fragment, Shortcut shortcut) {
         super(fragment.getContext(), R.layout.shortcut_settings_dialog);
@@ -50,7 +46,6 @@ public class ShortcutSettingsDialog extends ContentDialog {
 
     private void createContentView() {
         final Context context = fragment.getContext();
-        inputControlsManager = new InputControlsManager(context);
         LinearLayout llContent = findViewById(R.id.LLContent);
         llContent.getLayoutParams().width = AppUtils.getPreferredDialogWidth(context);
 
@@ -85,14 +80,10 @@ public class ShortcutSettingsDialog extends ContentDialog {
         final Spinner sBox64Preset = findViewById(R.id.SBox64Preset);
         Box64PresetManager.loadSpinner(sBox64Preset, shortcut.getExtra("box64Preset", shortcut.container.getBox64Preset()));
 
-        final Spinner sControlsProfile = findViewById(R.id.SControlsProfile);
-        loadControlsProfileSpinner(sControlsProfile, shortcut.getExtra("controlsProfile", "0"));
-
-        final Spinner sDInputMapperType = findViewById(R.id.SDInputMapperType);
-        sDInputMapperType.setSelection(Byte.parseByte(shortcut.getExtra("dinputMapperType", String.valueOf(GamepadHandler.DINPUT_MAPPER_TYPE_XINPUT))));
-
         ContainerDetailFragment.createWinComponentsTab(getContentView(), shortcut.getExtra("wincomponents", shortcut.container.getWinComponents()));
         final EnvVarsView envVarsView = createEnvVarsTab();
+
+        if (DexUtils.isDesktopMode(context) || DexUtils.hasExternalDisplay(context)) DexUtils.enableDialogModeForAllSpinners(getContentView());
 
         AppUtils.setupTabLayout(getContentView(), R.id.TabLayout, R.id.LLTabWinComponents, R.id.LLTabEnvVars, R.id.LLTabAdvanced);
 
@@ -159,13 +150,6 @@ public class ShortcutSettingsDialog extends ContentDialog {
             String box64Preset = Box64PresetManager.getSpinnerSelectedId(sBox64Preset);
             shortcut.putExtra("box64Preset", !box64Preset.equals(shortcut.container.getBox64Preset()) ? box64Preset : null);
 
-            ArrayList<ControlsProfile> profiles = inputControlsManager.getProfiles(true);
-            int controlsProfile = sControlsProfile.getSelectedItemPosition() > 0 ? profiles.get(sControlsProfile.getSelectedItemPosition()-1).id : 0;
-            shortcut.putExtra("controlsProfile", controlsProfile > 0 ? String.valueOf(controlsProfile) : null);
-
-            int dinputMapperType = sDInputMapperType.getSelectedItemPosition();
-            shortcut.putExtra("dinputMapperType", dinputMapperType != GamepadHandler.DINPUT_MAPPER_TYPE_XINPUT ? String.valueOf(dinputMapperType) : null);
-
             shortcut.saveData();
             if (!shortcut.name.equals(name) && !name.isEmpty()) renameShortcut(name);
 
@@ -197,21 +181,4 @@ public class ShortcutSettingsDialog extends ContentDialog {
         return envVarsView;
     }
 
-    private void loadControlsProfileSpinner(Spinner spinner, String selectedValue) {
-        final Context context = fragment.getContext();
-        final ArrayList<ControlsProfile> profiles = inputControlsManager.getProfiles(true);
-        ArrayList<String> values = new ArrayList<>();
-        values.add(context.getString(R.string.none));
-
-        int selectedPosition = 0;
-        int selectedId = Integer.parseInt(selectedValue);
-        for (int i = 0; i < profiles.size(); i++) {
-            ControlsProfile profile = profiles.get(i);
-            if (profile.id == selectedId) selectedPosition = i + 1;
-            values.add(profile.getName());
-        }
-
-        spinner.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, values));
-        spinner.setSelection(selectedPosition, false);
-    }
 }

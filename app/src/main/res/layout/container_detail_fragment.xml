@@ -324,27 +324,7 @@
                         android:text="@string/desktop" />
                 </FrameLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp">
 
-                    <LinearLayout style="@style/FieldSet">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/mouse_warp_override" />
-
-                        <Spinner
-                            style="@style/ComboBox"
-                            android:id="@+id/SMouseWarpOverride"
-                            android:layout_width="match_parent" />
-                    </LinearLayout>
-
-                    <TextView
-                        style="@style/FieldSetLabel"
-                        android:text="@string/directinput" />
-                </FrameLayout>
             </LinearLayout>
 
             <LinearLayout

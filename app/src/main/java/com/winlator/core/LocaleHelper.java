@@ -39,14 +39,9 @@ public class LocaleHelper {
     }
 
     public static void setEnvVars(EnvVars envVars) {
-        Locale locale = Locale.getDefault();
-        for (String name : supportedLocales) {
-            if (locale.toString().startsWith(name.substring(0, 2))) {
-                envVars.put("LC_ALL", name+".UTF-8");
-                return;
-            }
-        }
-
+        // DeX fork: Wine UI language is added by the app, but the guest glibc may
+        // lack non-English locale data (e.g. vi_VN), which breaks Wine startup.
+        // Keep the guest on en_US; the Android UI language is unaffected.
         envVars.put("LC_ALL", "en_US.UTF-8");
     }
 }

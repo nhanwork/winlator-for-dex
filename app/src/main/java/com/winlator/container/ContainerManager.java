@@ -118,11 +118,15 @@ public class ContainerManager {
             }
 
             // DeX-only defaults: Windows 11, DirectInput mouse warp off (absolute DeX mouse).
-            // Best-effort: never fail container creation because of defaults.
+            // Best-effort and only on complete prefixes: never fail creation because of defaults.
             try {
-                WineUtils.setWinVersion(container, 0);
-                try (WineRegistryEditor registryEditor = new WineRegistryEditor(new File(containerDir, ".wine/user.reg"))) {
-                    registryEditor.setStringValue("Software\\Wine\\DirectInput", "MouseWarpOverride", "disable");
+                File systemReg = new File(containerDir, ".wine/system.reg");
+                if (systemReg.isFile() && systemReg.length() > 0) WineUtils.setWinVersion(container, 0);
+                File userReg = new File(containerDir, ".wine/user.reg");
+                if (userReg.isFile() && userReg.length() > 0) {
+                    try (WineRegistryEditor registryEditor = new WineRegistryEditor(userReg)) {
+                        registryEditor.setStringValue("Software\\Wine\\DirectInput", "MouseWarpOverride", "disable");
+                    }
                 }
             }
             catch (Exception ignored) {}

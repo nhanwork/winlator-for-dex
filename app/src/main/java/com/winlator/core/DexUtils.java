@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import java.io.File;
 
 // shortcut: SEM desktop reflection may break on future OneUI; UiModeManager covers generic desktop mode.
+import com.winlator.widget.LogView;
+
 public abstract class DexUtils {
     private static final String SAMSUNG_DEX_FEATURE = "com.samsung.feature.samsung_dex";
 
@@ -96,5 +99,22 @@ public abstract class DexUtils {
                 dialog.dismiss();
             })
             .show();
+    }
+
+    // DeX fork: startup milestones for hang diagnosis (logs.txt may stay empty
+    // when the guest never emits output). Written to Documents/WinlatorDeX/.
+    public static void appendMarker(Context context, String message) {
+        try {
+            File dir = LogView.getLogFile().getParentFile();
+            if (dir != null && !dir.isDirectory() && !dir.mkdirs()) {
+                File extDir = context.getExternalFilesDir(null);
+                dir = extDir != null ? extDir : context.getFilesDir();
+            }
+            if (dir == null) return;
+            try (java.io.FileWriter writer = new java.io.FileWriter(new java.io.File(dir, "startup.log"), true)) {
+                writer.write(new java.util.Date().toString() + " " + message + "\n");
+            }
+        }
+        catch (Exception ignored) {}
     }
 }

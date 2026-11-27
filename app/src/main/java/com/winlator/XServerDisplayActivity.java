@@ -237,6 +237,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         }
 
         preloaderDialog.show(R.string.starting_up);
+        DexUtils.appendMarker(this, "setupXEnvironment begin");
 
         inputControlsManager = new InputControlsManager(this);
         xServer = new XServer(this, screenInfo);
@@ -251,6 +252,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             @Override
             public void onMapWindow(Window window) {
                 if (!flags[0] && window.isRenderable() && !window.getClassName().isEmpty()) {
+                    DexUtils.appendMarker(XServerDisplayActivity.this, "first window mapped: " + window.getClassName());
                     updateCursorVisibility();
                     preloaderDialog.closeOnUiThread();
                     flags[0] = true;
@@ -552,6 +554,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             overrideEnvVars = null;
         }
         environment.startEnvironmentComponents();
+        DexUtils.appendMarker(this, "environment components started, waiting for first window");
 
         winHandler.start();
         envVars.clear();

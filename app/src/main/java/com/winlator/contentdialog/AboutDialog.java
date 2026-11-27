@@ -22,7 +22,7 @@ public class AboutDialog extends ContentDialog {
             tvWebpage.setText(Html.fromHtml("<a href=\"https://github.com/nhanwork/winlator-for-dex\">winlator-for-dex</a>", Html.FROM_HTML_MODE_LEGACY));
             tvWebpage.setMovementMethod(LinkMovementMethod.getInstance());
 
-            ((TextView)findViewById(R.id.TVAppVersion)).setText(context.getString(R.string.version)+" "+pInfo.versionName);
+            ((TextView)findViewById(R.id.TVAppVersion)).setText(context.getString(R.string.version)+" "+pInfo.versionName+" ("+com.winlator.core.DexUtils.FORK_BUILD+")");
 
             String creditsAndThirdPartyAppsHTML = String.join("<br />",
                 "GLIBC Patches by (<a href=\"https://github.com/termux-pacman/glibc-packages\">Termux Pacman</a>)",

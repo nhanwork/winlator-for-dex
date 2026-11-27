@@ -3,7 +3,7 @@ name: Build DeX APK
 on:
   push:
     tags:
-      - 'dex-v*'
+      - 'v*'
   workflow_dispatch:
 
 jobs:

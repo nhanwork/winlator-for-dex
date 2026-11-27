@@ -28,6 +28,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.winlator.contentdialog.AboutDialog;
 import com.winlator.core.AppUtils;
 import com.winlator.core.Callback;
+import com.winlator.core.DexUtils;
 import com.winlator.core.LocaleHelper;
 import com.winlator.core.PreloaderDialog;
 import com.winlator.xenvironment.RootFSInstaller;
@@ -51,6 +52,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         AppUtils.setActivityTheme(this);
         super.onCreate(savedInstanceState);
+        if (!DexUtils.isDesktopMode(this) && !DexUtils.hasExternalDisplay(this)) {
+            AppUtils.showToast(this, R.string.dex_only_build);
+            finish();
+            return;
+        }
         setContentView(R.layout.main_activity);
 
         drawerLayout = findViewById(R.id.DrawerLayout);

@@ -133,7 +133,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private ClipboardManager.OnPrimaryClipChangedListener primaryClipListener;
     private String lastPushedClip = "";
     private boolean dexMode = false;
-    private boolean gameMode = true;
     private ImageButton pointerExitButton;
     private LinearLayout quickBar;
     private SharedPreferences preferences;
@@ -158,8 +157,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         dexMode = DexUtils.isDesktopMode(this);
-        boolean gameUserSet = preferences.getBoolean("game_mode_user_set", false);
-        gameMode = gameUserSet ? preferences.getBoolean("game_mode", true) : !dexMode;
         boolean clipUserSet = preferences.getBoolean("use_android_clipboard_on_wine_user_set", false);
         boolean useAndroidClipboardOnWine = preferences.getBoolean("use_android_clipboard_on_wine", false) || (!clipUserSet && dexMode);
         clipboardManager = useAndroidClipboardOnWine ? (ClipboardManager)getSystemService(CLIPBOARD_SERVICE) : null;
@@ -174,10 +171,8 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         NavigationView navigationView = findViewById(R.id.NavigationView);
         ProcessHelper.removeAllDebugCallbacks();
-        boolean enableLogs = preferences.getBoolean("enable_wine_debug", false) || preferences.getInt("box64_logs", 0) >= 1;
-        if (enableLogs) ProcessHelper.addDebugCallback(debugDialog = new DebugDialog(this));
         Menu menu = navigationView.getMenu();
-        menu.findItem(R.id.menu_item_logs).setVisible(enableLogs);
+        menu.findItem(R.id.menu_item_logs).setVisible(false);
         navigationView.setNavigationItemSelectedListener(this);
 
         rootFS = RootFS.find(this);
@@ -315,7 +310,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         super.onWindowFocusChanged(hasFocus);
 
         if (hasFocus) {
-            if (capturePointerOnExternalMouse && gameMode && !dexMode) {
+            if (capturePointerOnExternalMouse && !dexMode) {
                 // Captured events are delivered to the focused view.
                 View captureView = inputControlsView.getVisibility() == View.VISIBLE ? inputControlsView : touchpadView;
                 if (captureView.requestFocus()) captureView.requestPointerCapture();
@@ -435,10 +430,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 enterPictureInPictureMode(pipParams);
                 drawerLayout.closeDrawers();
                 break;
-            case R.id.menu_item_logs:
-                debugDialog.show();
-                drawerLayout.closeDrawers();
-                break;
             case R.id.menu_item_touchpad_help:
                 showTouchpadHelpDialog();
                 break;
@@ -543,7 +534,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             envVars.putAll(container.getEnvVars());
             if (shortcut != null) envVars.putAll(shortcut.getExtra("envVars"));
             if (!envVars.has("WINEESYNC")) envVars.put("WINEESYNC", "1");
-            if (!gameMode && !envVars.has("WINEDLLOVERRIDES")) envVars.put("WINEDLLOVERRIDES", "powershell.exe=d");
+            if (!envVars.has("WINEDLLOVERRIDES")) envVars.put("WINEDLLOVERRIDES", "powershell.exe=d");
 
             guestProgramLauncherComponent.setBox64Preset(shortcut != null ? shortcut.getExtra("box64Preset", container.getBox64Preset()) : container.getBox64Preset());
         }
@@ -655,7 +646,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         });
         rootView.addView(pointerExitButton);
         setupQuickBar(rootView);
-        applyGameMode(false);
+        applyOfficeMode();
 
         inputControlsView = new InputControlsView(this);
         inputControlsView.setOverlayOpacity(preferences.getFloat("overlay_opacity", InputControlsView.DEFAULT_OVERLAY_OPACITY));
@@ -709,14 +700,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         };
         loadProfileSpinner.run();
 
-        final CheckBox cbRelativeMouseMovement = dialog.findViewById(R.id.CBRelativeMouseMovement);
-        cbRelativeMouseMovement.setChecked(xServer.isRelativeMouseMovement());
-
-        final CheckBox cbGameMode = dialog.findViewById(R.id.CBGameMode);
-        cbGameMode.setChecked(gameMode);
-        cbGameMode.setOnCheckedChangeListener((button, checked) -> cbRelativeMouseMovement.setEnabled(checked));
-        cbRelativeMouseMovement.setEnabled(gameMode);
-
         final CheckBox cbShowTouchscreenControls = dialog.findViewById(R.id.CBShowTouchscreenControls);
         cbShowTouchscreenControls.setChecked(inputControlsView.isShowTouchscreenControls());
 
@@ -734,10 +717,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         });
 
         dialog.setOnConfirmCallback(() -> {
-            gameMode = cbGameMode.isChecked();
-            preferences.edit().putBoolean("game_mode", gameMode).putBoolean("game_mode_user_set", true).apply();
-            applyGameMode(true);
-            xServer.setRelativeMouseMovement(gameMode && cbRelativeMouseMovement.isChecked());
             inputControlsView.setShowTouchscreenControls(cbShowTouchscreenControls.isChecked());
             int position = sProfile.getSelectedItemPosition();
             if (position > 0) {
@@ -811,37 +790,24 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         LinearLayout.LayoutParams barItemParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         barItemParams.topMargin = margin;
         ImageButton keyboardButton = makeQuickButton(R.drawable.icon_keyboard, R.string.keyboard, (view) -> AppUtils.showKeyboard(this));
-        ImageButton gameModeButton = makeQuickButton(R.drawable.icon_input_controls, R.string.toggle_game_office_mode, (view) -> toggleGameMode());
+        ImageButton releaseButton = makeQuickButton(R.drawable.icon_exit, R.string.release_pointer_capture, (view) -> touchpadView.releaseCapture());
         ImageButton menuButton = makeQuickButton(R.drawable.icon_menu, R.string.open_menu, (view) -> {
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.openDrawer(GravityCompat.START);
         });
         quickBar.addView(keyboardButton, barItemParams);
-        quickBar.addView(gameModeButton, barItemParams);
+        quickBar.addView(releaseButton, barItemParams);
         quickBar.addView(menuButton, barItemParams);
         quickPanel.addView(quickBar);
         rootView.addView(quickPanel);
     }
 
-    private void toggleGameMode() {
-        gameMode = !gameMode;
-        preferences.edit().putBoolean("game_mode", gameMode).putBoolean("game_mode_user_set", true).apply();
-        applyGameMode(true);
-    }
-
-    // Office mode (gameMode=false): absolute mouse, no capture, cursor always visible.
-    private void applyGameMode(boolean notifyUser) {
+    // DeX-only build: office mode always, no game mode.
+    private void applyOfficeMode() {
         if (touchpadView == null) return;
-        if (!gameMode) {
-            xServer.setRelativeMouseMovement(false);
-            touchpadView.setCaptureAllowed(false);
-            updateCursorVisibility();
-            if (notifyUser) AppUtils.showToast(this, R.string.office_mode_enabled);
-        }
-        else {
-            touchpadView.setCaptureAllowed(capturePointerOnExternalMouse && !dexMode);
-            if (notifyUser) AppUtils.showToast(this, R.string.game_mode_enabled);
-        }
-        if (dexMode && !notifyUser) AppUtils.showToast(this, R.string.dex_mode_enabled);
+        xServer.setRelativeMouseMovement(false);
+        touchpadView.setCaptureAllowed(capturePointerOnExternalMouse && !dexMode);
+        updateCursorVisibility();
+        if (dexMode) AppUtils.showToast(this, R.string.dex_mode_enabled);
     }
 
     private void updateCursorVisibility() {

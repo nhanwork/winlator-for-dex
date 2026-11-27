@@ -148,6 +148,7 @@
         <item>English</item>
         <item>Português</item>
         <item>Русский</item>
+        <item>Tiếng Việt</item>
     </string-array>
     <string-array name="resource_memory_type_entries">
         <item>@string/auto</item>

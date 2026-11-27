@@ -31,7 +31,6 @@ jobs:
           export ANDROID_NDK_HOME="$ANDROID_SDK_ROOT/ndk/24.0.8215888"
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
-        working-directory: app
 
       - name: Upload APK to release
         if: startsWith(github.ref, 'refs/tags/')

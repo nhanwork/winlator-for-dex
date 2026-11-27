@@ -39,7 +39,6 @@
         <activity android:name="com.winlator.XServerDisplayActivity"
             android:exported="false"
             android:theme="@style/AppThemeFullscreenDark"
-            android:supportsPictureInPicture="true"
             android:resizeableActivity="true"
             android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|density|navigation"

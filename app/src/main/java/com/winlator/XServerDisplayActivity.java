@@ -1,7 +1,6 @@
 package com.winlator;
 
 import android.app.Activity;
-import android.app.PictureInPictureParams;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -171,8 +169,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         NavigationView navigationView = findViewById(R.id.NavigationView);
         ProcessHelper.removeAllDebugCallbacks();
-        Menu menu = navigationView.getMenu();
-        menu.findItem(R.id.menu_item_logs).setVisible(false);
         navigationView.setNavigationItemSelectedListener(this);
 
         rootFS = RootFS.find(this);
@@ -352,12 +348,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     }
 
     @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-        ForegroundService.setPipMode(isInPictureInPictureMode);
-    }
-
-    @Override
     protected void onDestroy() {
         if (clipboardManager != null && primaryClipListener != null) clipboardManager.removePrimaryClipChangedListener(primaryClipListener);
         winHandler.stop();
@@ -421,13 +411,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 break;
             case R.id.menu_item_screen_effect:
                 (new ScreenEffectDialog(this)).show();
-                drawerLayout.closeDrawers();
-                break;
-            case R.id.menu_item_pip_mode:
-                PictureInPictureParams pipParams = (new PictureInPictureParams.Builder())
-                    .setAspectRatio(screenInfo.aspectRatio())
-                    .build();
-                enterPictureInPictureMode(pipParams);
                 drawerLayout.closeDrawers();
                 break;
             case R.id.menu_item_touchpad_help:
